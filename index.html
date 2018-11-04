@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://d3js.org/queue.v1.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>  
+
+		<style>
+
+			#container {
+				width: 500px;
+				height: 500px;
+				border: 2px solid blue;
+			}
+			#display {
+				width: 300px,
+				height: 300px;
+				display: none;
+			};	
+
+
+		</style>
+
+	</head>
+
+	<body>
+		<div id="container">
+			<div id="bar_chart_canvas"></div>
+		</div>
+
+		<div id="display"></div>
+
+
+		<script>
+
+			
+			
+			function makeViz(dataArray) {
+
+				var width = 800;
+				var height = 800;
+				
+				var canvas = d3.select("#bar_chart_canvas").append("svg")
+						.attr("width", width)
+						.attr("height", height)
+	                        .append("g")  
+	                          .attr("transform","translate(50,-30)");  
+
+				var updateBars = function(dataArray) {
+					// create vertical bars
+					var bars = canvas.selectAll("rect").data(dataArray);
+
+						// add elements
+						bars.enter()
+							.append("rect");
+
+						//update existing elements
+						bars
+							.attr("width",30)
+							.attr("height",function(d,i,j){
+								return parseInt(d["testkey"])*10000;
+							})
+							.attr("fill", "blue")
+							.attr("x",function(d,i){
+								return (i+1)*20;
+							})
+								.append("g");
+
+						// remove old elements
+						bars.exit().remove();
+				};
+
+
+				updateBars(dataArray);
+
+			};
+
+
+			function main() {
+				d3.csv("files/cdhealth_records.csv", function(dataArray){
+					//$("#display").append("<p>"+"cd health data dataArray:" + JSON.stringify(dataArray) +"</p>")
+					//$("#display").append("object dataArray:", typeof dataArray)
+					// console.log(typeof JSON.stringify(dataArray[0]["cd_total_unins"]));
+
+					//var testArray = [{"cd":1, "testkey":0.001}, {"cd":2, "testkey":0.019}]
+					//makeViz(testArray);
+				});
+			};
+
+
+
+
+			/** CALL FUNCTIONS **/
+			$(document).ready(main());
+
+		</script>
+
+
+
+
+
+
+
+	</body>
+
+</html>

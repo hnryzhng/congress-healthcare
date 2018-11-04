@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>  
+
+		<style>
+
+			#display {
+				width: 300px,
+				height: 300px;
+				border: solid 2px black;
+				display: none;
+			};	
+
+			#svgContainer {
+				width: 500;
+				height: 700;
+			}
+
+
+		</style>
+
+	</head>
+
+	<body>
+
+		<div id="display"></div>
+		<div id="svgContainer"></div>
+
+		<script>
+
+			
+			
+			function makeViz(dataArray) {
+
+				// reference: https://beta.observablehq.com/@mbostock/d3-bar-chart
+
+				var width = 500;
+				var height = 700;
+				//var margin = {top: 20, right: 0, bottom: 30, left: 40};
+
+				/*
+				// labels: y-axis
+				// create list for domain labels of state, district 
+				var domainLabels = [];
+				for (i=0;i<dataArray.length;i++){
+					var record = dataArray[i];
+					var label = record["state_name"] + " " +record["district"];
+					domainLabels.push(label);
+				};
+				var xScale = d3.scaleBand()
+							.domain(domainLabels)
+							.range([margin.left,width-margin.right]);
+				var xAxis = d3.svg.axis()
+							.scale(xScale);
+				*/
+				// initiate svg canvas
+				var canvas = d3.select("body").append("svg")
+						.attr("width", width)
+						.attr("height", height)
+	                        .append("g");
+	                        //  .attr("transform","translate(50,-30)");  
+				
+//				var bars = canvas.selectAll("rect")
+//							.data(dataArray)
+//							.enter()
+//								.append("rect")
+//								.attr("width", function(d){
+//									return (parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0);
+//								})
+//								.attr("height", 5)
+//								.attr("y", function(d,i){return i*10})
+//								.attr("fill", "blue");
+
+				// invert bar chart by subtracting height of each bar from a value larger than the max height
+				var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+								.append("rect")
+								.attr("width", 1)
+								.attr("height", function(d){
+									return (parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0);
+								})
+								.attr("x", function(d,i){return i*1;})
+								.attr("y", function(d,i){return 100-(parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0)})
+								.attr("fill", function(d,i){
+									if (d["rep_party"] == "republican") {return "red"}
+									if (d["rep_party"] == "democrat") {return "blue"}
+								});
+			};
+
+
+			function main() {
+				d3.csv("files/cdhealth_records.csv", function(dataArray){
+					//console.log(JSON.stringify(dataArray));
+					//console.log(dataArray[0]["testkey"]);
+					console.log(dataArray[0]["cd_pct_unins"]);
+					console.log(typeof dataArray[0]["cd_pct_unins"]);
+				
+				
+					makeViz(dataArray);
+
+
+				});
+			};
+
+
+
+
+			/** CALL FUNCTIONS **/
+			$(document).ready(main());
+
+		</script>
+
+
+
+
+
+
+
+	</body>
+
+</html>
