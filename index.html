@@ -3,88 +3,183 @@
 <html>
 	<head>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script src="https://d3js.org/queue.v1.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>  
 
 		<style>
 
-			#container {
-				width: 500px;
-				height: 500px;
-				border: 2px solid blue;
-			}
 			#display {
 				width: 300px,
 				height: 300px;
+				border: solid 2px black;
 				display: none;
 			};	
 
+			#postViz {
+				width: 100%;
+				height: 400px;
+				border: 10px solid red;
+			}
+
+			#svgContainer {
+				width: 500;
+				height: 500;
+			}
+
+			#svgContainer2 {
+				width: 500;
+				height: 500;
+			}
+
+			#postText {
+				border: 1px solid blue;
+			}
+
+			#repContainer {
+				border: 1px solid green;	
+			}
 
 		</style>
 
 	</head>
 
 	<body>
-		<div id="container">
-			<div id="bar_chart_canvas"></div>
-		</div>
 
 		<div id="display"></div>
+		<div id="postContainer">
+			<div id="postViz">
+				<div id="svgContainer"></div>
+				<div id="svgContainer2"></div>
+			</div>
 
+			<div id="postText">This is post text.</div> 
 
+			<div id="repContainer">
+			</div>
+
+		</div>
 		<script>
 
 			
 			
-			function makeViz(dataArray) {
+			function makeVizOppose(dataArray) {
 
-				var width = 800;
-				var height = 800;
-				
-				var canvas = d3.select("#bar_chart_canvas").append("svg")
+				var width = 500;
+				var height = 500;
+				//var margin = {top: 20, right: 0, bottom: 30, left: 40};
+
+				// initiate svg canvas
+				var canvas = d3.select("#svgContainer").append("svg")
 						.attr("width", width)
 						.attr("height", height)
-	                        .append("g")  
-	                          .attr("transform","translate(50,-30)");  
+	                        .append("g");
+	                        //  .attr("transform","translate(50,-30)");  
+				
+				// invert bar chart by subtracting height of each bar from a value larger than the max height
+				var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+								.append("rect")
+								.attr("width", 1)
+								.attr("height", function(d){
+									if (d["rep_oppose_aca"] == "Y") {return (parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0);}
+								})
+								.attr("x", function(d,i){return i*1;})
+								.attr("y", function(d,i){return 500-(parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0)})
+								.attr("fill", function(d,i){
+									if (d["rep_party"] == "republican") {return "red"}
+									if (d["rep_party"] == "democrat") {return "blue"}
+								});
+			};
 
-				var updateBars = function(dataArray) {
-					// create vertical bars
-					var bars = canvas.selectAll("rect").data(dataArray);
+			function makeVizSupport(dataArray) {
 
-						// add elements
-						bars.enter()
-							.append("rect");
+				// reference: https://beta.observablehq.com/@mbostock/d3-bar-chart
 
-						//update existing elements
-						bars
-							.attr("width",30)
-							.attr("height",function(d,i,j){
-								return parseInt(d["testkey"])*10000;
-							})
-							.attr("fill", "blue")
-							.attr("x",function(d,i){
-								return (i+1)*20;
-							})
-								.append("g");
+				var width = 500;
+				var height = 300;
+				//var margin = {top: 20, right: 0, bottom: 30, left: 40};
 
-						// remove old elements
-						bars.exit().remove();
+				// initiate svg canvas
+				var canvas = d3.select("#svgContainer2").append("svg")
+						.attr("width", width)
+						.attr("height", height)
+	                        .append("g");
+	                        //  .attr("transform","translate(50,-30)");  
+
+				// invert bar chart by subtracting height of each bar from a value larger than the max height
+				var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+								.append("rect")
+								.attr("width", 5)
+								.attr("height", function(d){
+									if (d["rep_oppose_aca"] == "N") {return (parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0);}
+								})
+								.attr("x", function(d,i){return i*1;})
+								.attr("y", function(d,i){return 500-(parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0)})
+								.attr("fill", function(d,i){
+									if (d["rep_party"] == "republican") {return "red"}
+									if (d["rep_party"] == "democrat") {return "blue"}
+								});
+			};
+
+			function makeRepCards(dataArray) {
+
+				for (var i=0; i<dataArray.length; i++) {
+					var record = dataArray[i];
+
+					//console.log("rep cards record:", i)
+
+					// grab info 
+					var stateName = record["state_name"];
+					var district = "District " + record["district"];
+					var repName = record["rep_name"];
+					var repParty = record["rep_party"];
+					var repOpposeACA = record["rep_oppose_aca"];
+					var repPhotoUrl = record["rep_photo_url"];
+					var repContactPage = record["rep_contact_page"];
+					var repPhone = record["rep_phone"];
+					var repTwitter = record["rep_twitter"];
+					var repFacebook = record["rep_facebook"];
+
+					var femalePct = record["gender_female_pct"];
+					var malePct = record["gender_male_pct"];
+					// TASK: call rest of demographic records for later
+
+
+					// insert info into formatted string
+					repInfoList = [stateName,district,repName,repParty,repOpposeACA,repContactPage,repPhone,repTwitter,repFacebook];
+					var rep_info_html_string = "";
+					for (var j=0; j<repInfoList.length; j++) {
+						rep_info_html_string += "<p>"+repInfoList[j]+"</p>";
+					};
+
+					// render stacked bar chart for demographics 
+
+					// insert all data into card, append to repContainer
+					$("#repContainer").append(`<div class="repCard"><div class="repInfoDisplay"><img src='${repPhotoUrl}'>`+rep_info_html_string+`</div></div>`)
+					//$("#repContainer").append(rep_info_html_string);
+
+					// attach bar charts in repChartDisplay, append to repCard
+
 				};
 
-
-				updateBars(dataArray);
-
-			};
+			}
 
 
 			function main() {
 				d3.csv("files/cdhealth_records.csv", function(dataArray){
-					//$("#display").append("<p>"+"cd health data dataArray:" + JSON.stringify(dataArray) +"</p>")
-					//$("#display").append("object dataArray:", typeof dataArray)
-					// console.log(typeof JSON.stringify(dataArray[0]["cd_total_unins"]));
+					//console.log(JSON.stringify(dataArray));
+					//console.log(dataArray[0]["testkey"]);
+					console.log(dataArray[0]["cd_pct_unins"]);
+					console.log(typeof dataArray[0]["cd_pct_unins"]);
+				
+				
+					//makeVizOppose(dataArray);
+					//makeVizSupport(dataArray);
+					makeRepCards(dataArray);
 
-					//var testArray = [{"cd":1, "testkey":0.001}, {"cd":2, "testkey":0.019}]
-					//makeViz(testArray);
+
 				});
 			};
 
