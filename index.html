@@ -48,6 +48,9 @@
 		<div id="display"></div>
 		<div id="userInputBox">
 			fix user input field at top of page
+			Type in your address to search for your House representative
+			<input type="text" id="addressInput">
+			<a href=# id="submit_text">submit</a>
 		</div>
 		<div id="postContainer">
 			<div id="postViz">
@@ -62,8 +65,9 @@
 
 		</div>
 		<script>
-			//var userAddress = "8915 S Dairy Ashford, houston, tx 77099";
-			var userAddress = "22406 Ventura Blvd, Woodland Hills, CA 91364"
+			var userAddress = $("#addressInput").val();
+			//var userAddress = "11205 Bellaire Blvd, Houston, TX 77072";
+			//var userAddress = "22406 Ventura Blvd, Woodland Hills, CA 91364"
 
 			var stateabbrev2namecode = '{"AL": {"state_name": "Alabama", "state_code": "01"}, "AK": {"state_name": "Alaska", "state_code": "02"}, "AZ": {"state_name": "Arizona", "state_code": "04"}, "AR": {"state_name": "Arkansas", "state_code": "05"}, "CA": {"state_name": "California", "state_code": "06"}, "CO": {"state_name": "Colorado", "state_code": "08"}, "CT": {"state_name": "Connecticut", "state_code": "09"}, "DE": {"state_name": "Delaware", "state_code": "10"}, "DC": {"state_name": "District of Columbia", "state_code": "11"}, "FL": {"state_name": "Florida", "state_code": "12"}, "GA": {"state_name": "Georgia", "state_code": "13"}, "HI": {"state_name": "Hawaii", "state_code": "15"}, "ID": {"state_name": "Idaho", "state_code": "16"}, "IL": {"state_name": "Illinois", "state_code": "17"}, "IN": {"state_name": "Indiana", "state_code": "18"}, "IA": {"state_name": "Iowa", "state_code": "19"}, "KS": {"state_name": "Kansas", "state_code": "20"}, "KY": {"state_name": "Kentucky", "state_code": "21"}, "LA": {"state_name": "Louisiana", "state_code": "22"}, "ME": {"state_name": "Maine", "state_code": "23"}, "MD": {"state_name": "Maryland", "state_code": "24"}, "MA": {"state_name": "Massachusetts", "state_code": "25"}, "MI": {"state_name": "Michigan", "state_code": "26"}, "MN": {"state_name": "Minnesota", "state_code": "27"}, "MS": {"state_name": "Mississippi", "state_code": "28"}, "MO": {"state_name": "Missouri", "state_code": "29"}, "MT": {"state_name": "Montana", "state_code": "30"}, "NE": {"state_name": "Nebraska", "state_code": "31"}, "NV": {"state_name": "Nevada", "state_code": "32"}, "NH": {"state_name": "New Hampshire", "state_code": "33"}, "NJ": {"state_name": "New Jersey", "state_code": "34"}, "NM": {"state_name": "New Mexico", "state_code": "35"}, "NY": {"state_name": "New York", "state_code": "36"}, "NC": {"state_name": "North Carolina", "state_code": "37"}, "ND": {"state_name": "North Dakota", "state_code": "38"}, "OH": {"state_name": "Ohio", "state_code": "39"}, "OK": {"state_name": "Oklahoma", "state_code": "40"}, "OR": {"state_name": "Oregon", "state_code": "41"}, "PA": {"state_name": "Pennsylvania", "state_code": "42"}, "RI": {"state_name": "Rhode Island", "state_code": "44"}, "SC": {"state_name": "South Carolina", "state_code": "45"}, "SD": {"state_name": "South Dakota", "state_code": "46"}, "TN": {"state_name": "Tennessee", "state_code": "47"}, "TX": {"state_name": "Texas", "state_code": "48"}, "UT": {"state_name": "Utah", "state_code": "49"}, "VT": {"state_name": "Vermont", "state_code": "50"}, "VA": {"state_name": "Virginia", "state_code": "51"}, "WA": {"state_name": "Washington", "state_code": "53"}, "WV": {"state_name": "West Virginia", "state_code": "54"}, "WI": {"state_name": "Wisconsin", "state_code": "55"}, "WY": {"state_name": "Wyoming", "state_code": "56"}}';
 
@@ -97,7 +101,7 @@
 
 				var stabbrev = stcdString.match(regexST)[1].toUpperCase();
 				var cd = stcdString.match(regexCD)[1];
-				if (cd.length == 1)	{cd = "0"+cd};	// make cd two digits
+				if (cd.length == 1) {cd = "0"+cd};	// make cd two digits
 
 				//console.log("regex state:", stabbrev);
 				//console.log("regex cd:", cd);
@@ -111,10 +115,17 @@
 				stcd_code = state_code + cd;
 				console.log("stcd_code:", stcd_code);
 
+				// jump to rep card given stcd_code
+				// jump2rep(stcd_code);
+
 			};
 
 			function jump2rep(stcd_code) {
 				// jump to rep card given stcd_code
+				repElement = document.getElementById(stcd_code);
+				if (repElement != null) {
+					repElement.scrollIntoView({"behavior":"instant"});
+				};
 			}
 			
 			function makeVizOppose(dataArray) {
@@ -238,15 +249,15 @@
 					//console.log("stabbrev:", stateabbrev2namecode)
 
 					// Find congressional district given user address input
-					gapi.client.setApiKey('AIzaSyBdwLeB6a9ZTuLuEdYlM_JClg6FndXjfTs');
-					var stabbrev_cd = findCD(userAddress, findCDSuccess);
-					console.log("load functions stabbrev cd:", stabbrev_cd);
+					$("#submit_text").on("click", function{
+						gapi.client.setApiKey('AIzaSyBdwLeB6a9ZTuLuEdYlM_JClg6FndXjfTs');
+						findCD(userAddress, findCDSuccess);
+					});
 
 					//console.log(JSON.stringify(dataArray));
 					//console.log(dataArray[0]["testkey"]);
 					//console.log(dataArray[0]["cd_pct_unins"]);
 					//console.log(typeof dataArray[0]["cd_pct_unins"]);
-				
 				
 					//makeVizOppose(dataArray);
 					//makeVizSupport(dataArray);
