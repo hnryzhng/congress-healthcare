@@ -8,18 +8,15 @@
 
 		<style>
 
-			#display {
-				width: 300px,
-				height: 300px;
-				border: solid 2px black;
-				display: none;
-			};	
-
-			#postViz {
+			#userInputBox {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
 				width: 100%;
-				height: 400px;
-				border: 10px solid red;
-			}
+				background-color: white;
+				border: 1px solid blue;
+			}	
 
 			#svgContainer {
 				width: 500;
@@ -35,8 +32,31 @@
 				border: 1px solid blue;
 			}
 
-			#repContainer {
-				border: 1px solid green;	
+
+			.repCard {
+				margin: 0 auto;
+				width: 1000px;
+				height: 400px;
+				margin-top: 50px;
+			}
+
+			.repImgContainer {
+				float: left;
+				width: 40%;
+				height: 100%;
+				border: 1px solid red;
+			}
+
+			.repPhoto {
+				width: 200px;
+				height: 200px;
+			}
+
+			.repInfoDisplay {
+				float: right;
+				width: 40%;
+				height: 100%;
+				border: 1px solid green;
 			}
 
 		</style>
@@ -47,8 +67,7 @@
 
 		<div id="display"></div>
 		<div id="userInputBox">
-			fix user input field at top of page
-			Type in your address to search for your House representative
+			<p>Type in your address to search for your House representative</p>
 			<input type="text" id="addressInput">
 			<a id="submit_text" href=#>submit</a>
 			<div id="statusDisplay"></div>
@@ -222,22 +241,23 @@
 					var repTwitter = record["rep_twitter"];
 					var repFacebook = record["rep_facebook"];
 
-					var femalePct = record["gender_female_pct"];
-					var malePct = record["gender_male_pct"];
-					// TASK: call rest of demographic records for later
-
-
 					// insert info into formatted string
-					repInfoList = [stateName,district,repName,repParty,repOpposeACA,totalUnins,pctUnins,repContactPage,repPhone,repTwitter,repFacebook];
+					//var repInfoList = [stateName,district,repName,repParty,repOpposeACA,totalUnins,pctUnins,repContactPage,repPhone,repTwitter,repFacebook];
+					
+					var repInfoList = [{"state_block":stateName},{"district_block":district},{"name_block":repName},{"party_block":repParty},{"oppose_block":repOpposeACA},{"totalUnins_block":totalUnins},{"pctUnins_block":pctUnins},{"repContactUrl_block":repContactPage},{"repPhone_block":repPhone},{"repTwitter_block":repTwitter},{"repFacebook_block":repFacebook}];
+
 					var rep_info_html_string = "";
 					for (var j=0; j<repInfoList.length; j++) {
-						rep_info_html_string += "<p>"+repInfoList[j]+"</p>";
+						var record = repInfoList[j];
+						var id = Object.keys(record);
+						var content = Object.values(record);
+						rep_info_html_string += `<div id=${id}><p>${content}</p></div>`;
 					};
 
 					// render stacked bar chart for demographics 
 
 					// insert all data into card, append to repContainer
-					$("#repContainer").append(`<div class="repCard"><div class="repInfoDisplay" id="${stcdCode}"><img src='${repPhotoUrl}'>`+rep_info_html_string+`</div></div>`)
+					$("#repContainer").append(`<div class="repCard" id="${stcdCode}"><div class="repImgContainer"><img src='${repPhotoUrl}' class="repPhoto"></div><div class="repInfoDisplay">`+rep_info_html_string+`</div></div>`)
 					//$("#repContainer").append(rep_info_html_string);
 
 					// attach bar charts in repChartDisplay, append to repCard
