@@ -60,6 +60,13 @@
 		<script>
 
 			
+			function findCD(userAddress) {
+				/** find user's congressional district given address using Google Civics API **/
+
+
+
+			}
+
 			
 			function makeVizOppose(dataArray) {
 
@@ -130,12 +137,15 @@
 
 					//console.log("rep cards record:", i)
 
-					// grab info 
+					// grab and prettify info for display 
+					var stcdCode = record["stcd_code"];	// make this part of href tag so can reference when user inputs address using Google Civics API (relurl/#stcdCode)
 					var stateName = record["state_name"];
 					var district = "District " + record["district"];
 					var repName = record["rep_name"];
 					var repParty = record["rep_party"];
-					var repOpposeACA = record["rep_oppose_aca"];
+					var totalUnins = parseFloat(record["cd_total_unins"]).toFixed(0);
+					var pctUnins = (record["cd_pct_unins"]*100).toFixed(1) + "%";
+					var repOpposeACA = "Opposes Obamacare? " + record["rep_oppose_aca"];
 					var repPhotoUrl = record["rep_photo_url"];
 					var repContactPage = record["rep_contact_page"];
 					var repPhone = record["rep_phone"];
@@ -148,7 +158,7 @@
 
 
 					// insert info into formatted string
-					repInfoList = [stateName,district,repName,repParty,repOpposeACA,repContactPage,repPhone,repTwitter,repFacebook];
+					repInfoList = [stateName,district,repName,repParty,repOpposeACA,totalUnins,pctUnins,repContactPage,repPhone,repTwitter,repFacebook];
 					var rep_info_html_string = "";
 					for (var j=0; j<repInfoList.length; j++) {
 						rep_info_html_string += "<p>"+repInfoList[j]+"</p>";
@@ -157,7 +167,7 @@
 					// render stacked bar chart for demographics 
 
 					// insert all data into card, append to repContainer
-					$("#repContainer").append(`<div class="repCard"><div class="repInfoDisplay"><img src='${repPhotoUrl}'>`+rep_info_html_string+`</div></div>`)
+					$("#repContainer").append(`<div class="repCard"><div class="repInfoDisplay" id="${stcdCode}"><img src='${repPhotoUrl}'>`+rep_info_html_string+`</div></div>`)
 					//$("#repContainer").append(rep_info_html_string);
 
 					// attach bar charts in repChartDisplay, append to repCard
@@ -177,7 +187,7 @@
 				
 					//makeVizOppose(dataArray);
 					//makeVizSupport(dataArray);
-					makeRepCards(dataArray);
+					//makeRepCards(dataArray);
 
 
 				});
