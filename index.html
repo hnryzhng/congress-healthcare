@@ -50,7 +50,8 @@
 			fix user input field at top of page
 			Type in your address to search for your House representative
 			<input type="text" id="addressInput">
-			<a href=# id="submit_text">submit</a>
+			<a id="submit_text" href=#>submit</a>
+			<div id="statusDisplay"></div>
 		</div>
 		<div id="postContainer">
 			<div id="postViz">
@@ -65,7 +66,7 @@
 
 		</div>
 		<script>
-			var userAddress = $("#addressInput").val();
+			
 			//var userAddress = "11205 Bellaire Blvd, Houston, TX 77072";
 			//var userAddress = "22406 Ventura Blvd, Woodland Hills, CA 91364"
 
@@ -86,38 +87,45 @@
 
 				req.execute(callback);
 
-				//console.log("findcd stabbrev:", stateabbrev2namecode);
+				console.log("findcd userAddress:", userAddress);
 
 			};
 
 			function findCDSuccess(response, rawResponse) {
-				//console.log("response:", response["divisions"]);
-				var divisionsArray = Object.keys(response["divisions"]);
-				var stcdString = divisionsArray[2];
-				console.log("stcdString:", stcdString);
 
-				var regexST = /state:([a-z]+)/;
-				var regexCD = /cd:([0-9]+)/;
+				console.log("response:", response);
+				if (response["error"]) {
+					console.log("error");
+					$("#statusDisplay").html("<p>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>")
+				} else {
 
-				var stabbrev = stcdString.match(regexST)[1].toUpperCase();
-				var cd = stcdString.match(regexCD)[1];
-				if (cd.length == 1) {cd = "0"+cd};	// make cd two digits
+					//console.log("response:", response["divisions"]);
+					var divisionsArray = Object.keys(response["divisions"]);
+					var stcdString = divisionsArray[2];
+					console.log("stcdString:", stcdString);
 
-				//console.log("regex state:", stabbrev);
-				//console.log("regex cd:", cd);
+					var regexST = /state:([a-z]+)/;
+					var regexCD = /cd:([0-9]+)/;
 
-				// map stabbrev to state FIPS code
-				var stateabbrev2namecodeObj = JSON.parse(stateabbrev2namecode);
-				//console.log("state_code:", stateabbrev2namecodeObj[stabbrev]["state_code"]);
+					var stabbrev = stcdString.match(regexST)[1].toUpperCase();
+					var cd = stcdString.match(regexCD)[1];
+					if (cd.length == 1) {cd = "0"+cd};	// make cd two digits
 
-				var state_code = stateabbrev2namecodeObj[stabbrev]["state_code"];
+					//console.log("regex state:", stabbrev);
+					//console.log("regex cd:", cd);
 
-				stcd_code = state_code + cd;
-				console.log("stcd_code:", stcd_code);
+					// map stabbrev to state FIPS code
+					var stateabbrev2namecodeObj = JSON.parse(stateabbrev2namecode);
+					//console.log("state_code:", stateabbrev2namecodeObj[stabbrev]["state_code"]);
 
-				// jump to rep card given stcd_code
-				// jump2rep(stcd_code);
+					var state_code = stateabbrev2namecodeObj[stabbrev]["state_code"];
 
+					stcd_code = state_code + cd;
+					console.log("stcd_code:", stcd_code);
+
+					// jump to rep card given stcd_code
+					jump2rep(stcd_code);
+				};
 			};
 
 			function jump2rep(stcd_code) {
@@ -125,7 +133,9 @@
 				repElement = document.getElementById(stcd_code);
 				if (repElement != null) {
 					repElement.scrollIntoView({"behavior":"instant"});
-				};
+				} else {
+					$("#statusDisplay").html("<p>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>");
+				}
 			}
 			
 			function makeVizOppose(dataArray) {
@@ -248,20 +258,24 @@
 
 					//console.log("stabbrev:", stateabbrev2namecode)
 
+					//makeVizOppose(dataArray);
+					//makeVizSupport(dataArray);
+					makeRepCards(dataArray);
+
 					// Find congressional district given user address input
-					$("#submit_text").on("click", function{
+					$("#submit_text").on("click", function(){
+						var userAddress = $("#addressInput").val();
+						//console.log("submit useraddress:", userAddress);
+						
 						gapi.client.setApiKey('AIzaSyBdwLeB6a9ZTuLuEdYlM_JClg6FndXjfTs');
 						findCD(userAddress, findCDSuccess);
 					});
-
+					
 					//console.log(JSON.stringify(dataArray));
 					//console.log(dataArray[0]["testkey"]);
 					//console.log(dataArray[0]["cd_pct_unins"]);
 					//console.log(typeof dataArray[0]["cd_pct_unins"]);
 				
-					//makeVizOppose(dataArray);
-					//makeVizSupport(dataArray);
-					makeRepCards(dataArray);
 
 					//findCD(userAddress)
 				};				
