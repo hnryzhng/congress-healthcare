@@ -234,30 +234,32 @@
 					var repParty = record["rep_party"];
 					var totalUnins = parseFloat(record["cd_total_unins"]).toFixed(0);
 					var pctUnins = (record["cd_pct_unins"]*100).toFixed(1) + "%";
-					var repOpposeACA = "Opposes Obamacare? " + record["rep_oppose_aca"];
+					var repOpposeACA = record["rep_oppose_aca"];
 					var repPhotoUrl = record["rep_photo_url"];
 					var repContactPage = record["rep_contact_page"];
 					var repPhone = record["rep_phone"];
 					var repTwitter = record["rep_twitter"];
 					var repFacebook = record["rep_facebook"];
 
-					// insert info into formatted string
-					//var repInfoList = [stateName,district,repName,repParty,repOpposeACA,totalUnins,pctUnins,repContactPage,repPhone,repTwitter,repFacebook];
-					
+					// insert info into formatted string for html
+
 					var repInfoList = [{"state_block":stateName},{"district_block":district},{"name_block":repName},{"party_block":repParty},{"oppose_block":repOpposeACA},{"totalUnins_block":totalUnins},{"pctUnins_block":pctUnins},{"repContactUrl_block":repContactPage},{"repPhone_block":repPhone},{"repTwitter_block":repTwitter},{"repFacebook_block":repFacebook}];
 
+					var labels = ["State", "District", "Name", "Party", "Oppose Obamacare?", "Number of Uninsured in District", "Percentage Uninsured in District", "Contact Page", "Phone", "Twitter", "Facebook"];
+					
 					var rep_info_html_string = "";
 					for (var j=0; j<repInfoList.length; j++) {
 						var record = repInfoList[j];
 						var id = Object.keys(record);
+						var label = labels[j];
 						var content = Object.values(record);
-						rep_info_html_string += `<div id=${id}><p>${content}</p></div>`;
+						rep_info_html_string += `<div id=${id}><p>${label}: ${content}</p></div>`;
 					};
 
 					// render stacked bar chart for demographics 
 
 					// insert all data into card, append to repContainer
-					$("#repContainer").append(`<div class="repCard" id="${stcdCode}"><div class="repImgContainer"><img src='${repPhotoUrl}' class="repPhoto"></div><div class="repInfoDisplay">`+rep_info_html_string+`</div></div>`)
+					$("#repContainer").append(`<div class="repCard" id="${stcdCode}"><div class="repImgContainer"><img src="${repPhotoUrl}" class="repPhoto"></div><div class="repInfoDisplay">`+rep_info_html_string+`</div></div>`)
 					//$("#repContainer").append(rep_info_html_string);
 
 					// attach bar charts in repChartDisplay, append to repCard
@@ -301,9 +303,6 @@
 				};				
 
 			};
-
-
-
 
 			/** CALL FUNCTIONS **/
 			//$(document).ready(main());
