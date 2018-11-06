@@ -270,7 +270,7 @@
 			function main() {
 
 				queue()
-					.defer(d3.csv, 'files/cdhealth_records.csv')
+					.defer(d3.csv, 'files/cdrep_records.csv')
 					.await(loadFunctions);
 
 				function loadFunctions(error, dataArray) {
