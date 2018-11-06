@@ -1,63 +1,53 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+		<!-- D3 -->
 		<script src="https://d3js.org/d3.v4.min.js"></script>
 		<script src="https://d3js.org/queue.v1.min.js"></script>
+
+		<!--jQuery -->
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>  
+
 
 		<style>
 
-			#userInputBox {
-				position: fixed;
-				top: 0;
-				left: 0;
-				right: 0;
-				width: 100%;
-				background-color: white;
-				border: 1px solid blue;
-			}	
-
-			#svgContainer {
-				width: 500;
-				height: 500;
+			.row {
+				background: #f8f9fa;
+				margin-top: 20px;
 			}
 
-			#svgContainer2 {
-				width: 500;
-				height: 500;
+			.col {
+				border: solid 1px #6c757d;
+				padding: 10px;
 			}
 
-			#postText {
-				border: 1px solid blue;
+			.navbar {
+				border: 1px solid #eeeeee;
 			}
 
-
-			.repCard {
-				margin: 0 auto;
-				width: 1000px;
-				height: 400px;
-				margin-top: 50px;
+			#statusDisplay {
+				height: 50px;
 			}
 
-			.repImgContainer {
-				float: left;
-				width: 40%;
-				height: 100%;
-				border: 1px solid red;
+			.rep_card {
+				border: 1px solid #eeeeee;
 			}
 
-			.repPhoto {
-				width: 200px;
-				height: 200px;
+			.info_display {
+				margin-left: 30px;
 			}
 
-			.repInfoDisplay {
-				float: right;
-				width: 40%;
-				height: 100%;
-				border: 1px solid green;
+			.photo {
 			}
+
 
 		</style>
 
@@ -65,23 +55,25 @@
 
 	<body>
 
-		<div id="display"></div>
-		<div id="userInputBox">
-			<p>Type in your address to search for your House representative</p>
-			<input type="text" id="addressInput">
-			<a id="submit_text" href=#>submit</a>
-			<div id="statusDisplay"></div>
-		</div>
+		<nav class="navbar fixed-top navbar-light bg-light container">
+			<a class="navbar-brand col-sm" href=#>Pictograf</a>
+
+			<div class="input-group mb-3 col-sm-10" id="search-container">
+				<input type="text" class="form-control" id="addressInput" placeholder="Type in your full address to find your representative">
+				<div class="input-group-append">
+					<a class="btn btn-primary" id="submit_text" href=# role="button">Search</a>
+				</div>
+
+			</div>
+
+		</nav>
+
+		<div id="statusDisplay"></div>
+
+
 		<div id="postContainer">
-			<div id="postViz">
-				<div id="svgContainer"></div>
-				<div id="svgContainer2"></div>
-			</div>
 
-			<div id="postText">This is post text.</div> 
-
-			<div id="repContainer">
-			</div>
+			<div class="container" id="repContainer"></div>
 
 		</div>
 		<script>
@@ -156,7 +148,7 @@
 					$("#statusDisplay").html("<p>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>");
 				}
 			}
-			
+			/**
 			function makeVizOppose(dataArray) {
 
 				var width = 500;
@@ -218,6 +210,7 @@
 									if (d["rep_party"] == "democrat") {return "blue"}
 								});
 			};
+			**/
 
 			function makeRepCards(dataArray) {
 
@@ -231,7 +224,8 @@
 					var stateName = record["state_name"];
 					var district = "District " + record["district"];
 					var repName = record["rep_name"];
-					var repParty = record["rep_party"];
+					var repPartyRaw = record["rep_party"];
+					var repParty = repPartyRaw.charAt(0).toUpperCase() + repPartyRaw.slice(1);	// first letter uppercase
 					var totalUnins = parseFloat(record["cd_total_unins"]).toFixed(0);
 					var pctUnins = (record["cd_pct_unins"]*100).toFixed(1) + "%";
 					var repOpposeACA = record["rep_oppose_aca"];
@@ -241,28 +235,32 @@
 					var repTwitter = record["rep_twitter"];
 					var repFacebook = record["rep_facebook"];
 
-					// insert info into formatted string for html
+					// insert all data into formatted string of card, append to repContainer
 
-					var repInfoList = [{"state_block":stateName},{"district_block":district},{"name_block":repName},{"party_block":repParty},{"oppose_block":repOpposeACA},{"totalUnins_block":totalUnins},{"pctUnins_block":pctUnins},{"repContactUrl_block":repContactPage},{"repPhone_block":repPhone},{"repTwitter_block":repTwitter},{"repFacebook_block":repFacebook}];
-
-					var labels = ["State", "District", "Name", "Party", "Oppose Obamacare?", "Number of Uninsured in District", "Percentage Uninsured in District", "Contact Page", "Phone", "Twitter", "Facebook"];
-					
-					var rep_info_html_string = "";
-					for (var j=0; j<repInfoList.length; j++) {
-						var record = repInfoList[j];
-						var id = Object.keys(record);
-						var label = labels[j];
-						var content = Object.values(record);
-						rep_info_html_string += `<div id=${id}><p>${label}: ${content}</p></div>`;
-					};
-
-					// render stacked bar chart for demographics 
-
-					// insert all data into card, append to repContainer
-					$("#repContainer").append(`<div class="repCard" id="${stcdCode}"><div class="repImgContainer"><img src="${repPhotoUrl}" class="repPhoto"></div><div class="repInfoDisplay">`+rep_info_html_string+`</div></div>`)
-					//$("#repContainer").append(rep_info_html_string);
-
-					// attach bar charts in repChartDisplay, append to repCard
+					var repCardString =`<div class="rep_card row" id=${stcdCode}>
+											<div class="repImgContainer col-sm">
+												<a href=${repContactPage}>
+													<img src=${repPhotoUrl} class="photo img-fluid">
+												</a>
+											</div>
+											<div class="info_display col-sm">
+												<div class="state row h1">${stateName}</div>
+												<div class="district row h4">${district}</div>
+												<div class="name row">Representative: ${repName}</div>
+												<div class="party row">Party: ${repParty}</div>
+												<div class="oppose_aca row">Oppose Obamacare? ${repOpposeACA}</div>
+												<div class="total_unins row">Num Uninsured: ${totalUnins}</div>
+												<div class="pct_unins row">Pct Uninsured: ${pctUnins}</div>
+												<div class="phone row">Phone: ${repPhone}</div>
+												<div class="contact_block row">
+													<a href=${repContactPage} class="contact_page col-sm">Contact Page</a>
+													<a href=${repTwitter} class="twitter col-sm">Twitter</a>
+													<a href=${repFacebook} class="facebook col-sm">Facebook</a>
+												</div>
+											</div>
+									</div>`
+					$("#repContainer").append(repCardString);
+								
 
 				};
 
@@ -311,8 +309,9 @@
 
 		<script src="https://apis.google.com/js/client.js?onload=main"></script>
 
-
-
+		<!-- call Bootstrap JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 
 	</body>
