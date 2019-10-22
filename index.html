@@ -21,7 +21,7 @@
 
 			.row {
 				background: #f8f9fa;
-				margin-top: 20px;
+				padding-top: 6px;
 			}
 
 			.col {
@@ -31,22 +31,52 @@
 
 			.navbar {
 				border: 1px solid #eeeeee;
+				margin-bottom: 100px;
+			}
+
+			#top-offset {
+				height: 80px;
 			}
 
 			#statusDisplay {
-				height: 50px;
+				display: none;
+				position: absolute;
+				width: 100%;
+				z-index: 999;
+				background-color: white;
+				margin-top: 3em;
+				border: 1px solid #a0a0a0;
+				text-align: center;
+				padding: 10px 10px 10px 10px;
+			}
+
+
+			.status_message {
+				color: black;
 			}
 
 			.rep_card {
 				border: 1px solid #eeeeee;
+				padding-right: 30px;
+				padding-bottom: 10px;
+				margin-top: 10px;
 			}
 
 			.info_display {
 				margin-left: 30px;
 			}
 
-			.photo {
+			.contact_page, .twitter, .facebook {
+				margin-left: 2px;
+				margin-right: 2px;
 			}
+
+			.text-style {
+				font-size: 16px;
+				font-weight: bold;
+				padding-left: 10px;
+			}
+
 
 
 		</style>
@@ -65,10 +95,10 @@
 				</div>
 
 			</div>
-
+			<div id="statusDisplay"></div>
 		</nav>
-
-		<div id="statusDisplay"></div>
+		
+		<div id="top-offset"></div>
 
 
 		<div id="postContainer">
@@ -77,9 +107,6 @@
 
 		</div>
 		<script>
-			
-			//var userAddress = "11205 Bellaire Blvd, Houston, TX 77072";
-			//var userAddress = "22406 Ventura Blvd, Woodland Hills, CA 91364"
 
 			var stateabbrev2namecode = '{"AL": {"state_name": "Alabama", "state_code": "01"}, "AK": {"state_name": "Alaska", "state_code": "02"}, "AZ": {"state_name": "Arizona", "state_code": "04"}, "AR": {"state_name": "Arkansas", "state_code": "05"}, "CA": {"state_name": "California", "state_code": "06"}, "CO": {"state_name": "Colorado", "state_code": "08"}, "CT": {"state_name": "Connecticut", "state_code": "09"}, "DE": {"state_name": "Delaware", "state_code": "10"}, "DC": {"state_name": "District of Columbia", "state_code": "11"}, "FL": {"state_name": "Florida", "state_code": "12"}, "GA": {"state_name": "Georgia", "state_code": "13"}, "HI": {"state_name": "Hawaii", "state_code": "15"}, "ID": {"state_name": "Idaho", "state_code": "16"}, "IL": {"state_name": "Illinois", "state_code": "17"}, "IN": {"state_name": "Indiana", "state_code": "18"}, "IA": {"state_name": "Iowa", "state_code": "19"}, "KS": {"state_name": "Kansas", "state_code": "20"}, "KY": {"state_name": "Kentucky", "state_code": "21"}, "LA": {"state_name": "Louisiana", "state_code": "22"}, "ME": {"state_name": "Maine", "state_code": "23"}, "MD": {"state_name": "Maryland", "state_code": "24"}, "MA": {"state_name": "Massachusetts", "state_code": "25"}, "MI": {"state_name": "Michigan", "state_code": "26"}, "MN": {"state_name": "Minnesota", "state_code": "27"}, "MS": {"state_name": "Mississippi", "state_code": "28"}, "MO": {"state_name": "Missouri", "state_code": "29"}, "MT": {"state_name": "Montana", "state_code": "30"}, "NE": {"state_name": "Nebraska", "state_code": "31"}, "NV": {"state_name": "Nevada", "state_code": "32"}, "NH": {"state_name": "New Hampshire", "state_code": "33"}, "NJ": {"state_name": "New Jersey", "state_code": "34"}, "NM": {"state_name": "New Mexico", "state_code": "35"}, "NY": {"state_name": "New York", "state_code": "36"}, "NC": {"state_name": "North Carolina", "state_code": "37"}, "ND": {"state_name": "North Dakota", "state_code": "38"}, "OH": {"state_name": "Ohio", "state_code": "39"}, "OK": {"state_name": "Oklahoma", "state_code": "40"}, "OR": {"state_name": "Oregon", "state_code": "41"}, "PA": {"state_name": "Pennsylvania", "state_code": "42"}, "RI": {"state_name": "Rhode Island", "state_code": "44"}, "SC": {"state_name": "South Carolina", "state_code": "45"}, "SD": {"state_name": "South Dakota", "state_code": "46"}, "TN": {"state_name": "Tennessee", "state_code": "47"}, "TX": {"state_name": "Texas", "state_code": "48"}, "UT": {"state_name": "Utah", "state_code": "49"}, "VT": {"state_name": "Vermont", "state_code": "50"}, "VA": {"state_name": "Virginia", "state_code": "51"}, "WA": {"state_name": "Washington", "state_code": "53"}, "WV": {"state_name": "West Virginia", "state_code": "54"}, "WI": {"state_name": "Wisconsin", "state_code": "55"}, "WY": {"state_name": "Wyoming", "state_code": "56"}}';
 
@@ -99,6 +126,10 @@
 				req.execute(callback);
 
 				console.log("findcd userAddress:", userAddress);
+				
+				$("#statusDisplay").show().html("<p class='status_message h5'>Searching for your House rep based on address: "+userAddress+"</p>");
+
+
 
 			};
 
@@ -107,7 +138,14 @@
 				console.log("response:", response);
 				if (response["error"]) {
 					console.log("error");
-					$("#statusDisplay").html("<p>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>")
+					$("#statusDisplay").html("<p class='status_message h5'>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>")
+
+					setTimeout(statusHide, 2000);
+
+					function statusHide() {
+						$("#statusDisplay").hide();
+					};
+
 				} else {
 
 					//console.log("response:", response["divisions"]);
@@ -136,6 +174,11 @@
 
 					// jump to rep card given stcd_code
 					jump2rep(stcd_code);
+
+					//$("#statusDisplay").html("<p>This is your Congress rep based on the address you gave.</p>")
+
+					$("#statusDisplay").hide();
+
 				};
 			};
 
@@ -145,72 +188,9 @@
 				if (repElement != null) {
 					repElement.scrollIntoView({"behavior":"instant"});
 				} else {
-					$("#statusDisplay").html("<p>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>");
+					$("#statusDisplay").html("<p class='status_message h5'>We couldn't find your Congress rep based on your address. Scroll down to see if he or she is listed.</p>");
 				}
 			}
-			/**
-			function makeVizOppose(dataArray) {
-
-				var width = 500;
-				var height = 500;
-				//var margin = {top: 20, right: 0, bottom: 30, left: 40};
-
-				// initiate svg canvas
-				var canvas = d3.select("#svgContainer").append("svg")
-						.attr("width", width)
-						.attr("height", height)
-	                        .append("g");
-	                        //  .attr("transform","translate(50,-30)");  
-				
-				// invert bar chart by subtracting height of each bar from a value larger than the max height
-				var bars = canvas.selectAll("rect")
-							.data(dataArray)
-							.enter()
-								.append("rect")
-								.attr("width", 1)
-								.attr("height", function(d){
-									if (d["rep_oppose_aca"] == "Y") {return (parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0);}
-								})
-								.attr("x", function(d,i){return i*1;})
-								.attr("y", function(d,i){return 500-(parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0)})
-								.attr("fill", function(d,i){
-									if (d["rep_party"] == "republican") {return "red"}
-									if (d["rep_party"] == "democrat") {return "blue"}
-								});
-			};
-
-			function makeVizSupport(dataArray) {
-
-				// reference: https://beta.observablehq.com/@mbostock/d3-bar-chart
-
-				var width = 500;
-				var height = 300;
-				//var margin = {top: 20, right: 0, bottom: 30, left: 40};
-
-				// initiate svg canvas
-				var canvas = d3.select("#svgContainer2").append("svg")
-						.attr("width", width)
-						.attr("height", height)
-	                        .append("g");
-	                        //  .attr("transform","translate(50,-30)");  
-
-				// invert bar chart by subtracting height of each bar from a value larger than the max height
-				var bars = canvas.selectAll("rect")
-							.data(dataArray)
-							.enter()
-								.append("rect")
-								.attr("width", 5)
-								.attr("height", function(d){
-									if (d["rep_oppose_aca"] == "N") {return (parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0);}
-								})
-								.attr("x", function(d,i){return i*1;})
-								.attr("y", function(d,i){return 500-(parseFloat(d["cd_pct_unins"]) * 1000).toFixed(0)})
-								.attr("fill", function(d,i){
-									if (d["rep_party"] == "republican") {return "red"}
-									if (d["rep_party"] == "democrat") {return "blue"}
-								});
-			};
-			**/
 
 			function makeRepCards(dataArray) {
 
@@ -222,12 +202,20 @@
 					// grab and prettify info for display 
 					var stcdCode = record["stcd_code"];	// make this part of href tag so can reference when user inputs address using Google Civics API (relurl/#stcdCode)
 					var stateName = record["state_name"];
-					var district = "District " + record["district"];
+					
+					var district = record["district"];
+					if (district == "00") {var district = "District: At Large"}
+					else {district = "District " + district};
+
 					var repName = record["rep_name"];
 					var repPartyRaw = record["rep_party"];
 					var repParty = repPartyRaw.charAt(0).toUpperCase() + repPartyRaw.slice(1);	// first letter uppercase
+					
 					var totalUnins = parseFloat(record["cd_total_unins"]).toFixed(0);
+					if (totalUnins == 0) {var totalUnins = "N/A"};
 					var pctUnins = (record["cd_pct_unins"]*100).toFixed(1) + "%";
+					if (pctUnins == "0.0%") {var pctUnins = "N/A"};
+
 					var repOpposeACA = record["rep_oppose_aca"];
 					var repPhotoUrl = record["rep_photo_url"];
 					var repContactPage = record["rep_contact_page"];
@@ -236,7 +224,6 @@
 					var repFacebook = record["rep_facebook"];
 
 					// insert all data into formatted string of card, append to repContainer
-
 					var repCardString =`<div class="rep_card row" id=${stcdCode}>
 											<div class="repImgContainer col-sm">
 												<a href=${repContactPage}>
@@ -246,16 +233,16 @@
 											<div class="info_display col-sm">
 												<div class="state row h1">${stateName}</div>
 												<div class="district row h4">${district}</div>
-												<div class="name row">Representative: ${repName}</div>
-												<div class="party row">Party: ${repParty}</div>
-												<div class="oppose_aca row">Oppose Obamacare? ${repOpposeACA}</div>
-												<div class="total_unins row">Num Uninsured: ${totalUnins}</div>
-												<div class="pct_unins row">Pct Uninsured: ${pctUnins}</div>
-												<div class="phone row">Phone: ${repPhone}</div>
+												<div class="name row">Representative: <p class="text-style">${repName}</p></div>
+												<div class="party row">Party: <p class="text-style">${repParty}</p></div>
+												<div class="oppose_aca row">Oppose Obamacare?<p class="text-style">${repOpposeACA}</p></div>
+												<div class="total_unins row">Num Uninsured: <p class="text-style">${totalUnins}</p></div>
+												<div class="pct_unins row">Pct Uninsured: <p class="text-style">${pctUnins}</p></div>
+												<div class="phone row">Phone: <p class="text-style">${repPhone}</div>
 												<div class="contact_block row">
-													<a href=${repContactPage} class="contact_page col-sm">Contact Page</a>
-													<a href=${repTwitter} class="twitter col-sm">Twitter</a>
-													<a href=${repFacebook} class="facebook col-sm">Facebook</a>
+													<a href=${repContactPage} class="contact_page col-sm btn btn-primary">Contact Page</a>
+													<a href=${repTwitter} class="twitter col-sm btn btn-primary">Twitter</a>
+													<a href=${repFacebook} class="facebook col-sm btn btn-primary">Facebook</a>
 												</div>
 											</div>
 									</div>`
@@ -264,8 +251,76 @@
 
 				};
 
-			}
+			};
 
+
+
+
+
+			function lazyLoadEvent() {
+				console.log("lazy load wrapper");
+
+				document.addEventListener("DOMContentLoaded", function(){
+					 var lazyLoadImages = document.querySelectorAll("img.lazy");
+					 console.log("lazy imgs:", lazyLoadImages);
+					 var lazyLoadThrottleTimeout;
+
+					 function lazyLoad() {
+					 	if (lazyLoadThrottleTimeout) {
+					 		clearTimeout(lazyLoadThrottleTimeout);
+					 	}
+
+					 	lazyloadthrottleTimeout = setTimeout(function() {
+					 		var scrollTop = window.pageYOffset;
+					 		lazyLoadImages.forEach(function(img) {
+					 			if(img.offsetTop < (window.innerHeight + scrollTop)) {
+					 				img.src = img.dataset.src;
+					 				img.classList.remove("lazy");
+					 			}
+					 		});
+
+					 		if (lazyLoadImages.length == 0) {
+					 			document.removeEventListener("resize", lazyLoad);
+					 			window.removeEventListener("resize", lazyLoad);
+					 			window.removeEventListener("orientationChange", lazyLoad);
+					 		}
+					 	}, 20);	// timeout for 20 ms before loading after lazyLoad fn is called
+
+					 };
+					 
+
+					// initialize event listeners to trigger lazy load
+					document.addEventListener("scroll", lazyLoad);
+					// event: trigger lazy load upon window resize
+					window.addEventListener("resize", lazyLoad);
+					// event: trigger lazy load upon change in screen orientation (intended for smartphones, tablets)
+					window.addEventListener("orientationChange", lazyLoad);
+
+
+				});
+			};
+
+
+			function eventListener() {
+
+				// event: pressing enter from text field
+				$("#addressInput").keypress(function(event){
+					if (event.which == 13) {
+						$("#submit_text").click();	// trigger submit button
+					}
+				});
+
+				// event: clicking submit button
+				$("#submit_text").on("click", function(){
+					var userAddress = $("#addressInput").val();
+					//console.log("submit useraddress:", userAddress);
+					gapi.client.setApiKey('AIzaSyBdwLeB6a9ZTuLuEdYlM_JClg6FndXjfTs');
+					findCD(userAddress, findCDSuccess);
+				});
+
+				// event: lazy load
+				// lazyLoadEvent();
+			};
 
 			function main() {
 
@@ -278,26 +333,13 @@
 
 					//console.log("stabbrev:", stateabbrev2namecode)
 
-					//makeVizOppose(dataArray);
-					//makeVizSupport(dataArray);
 					makeRepCards(dataArray);
 
-					// Find congressional district given user address input
-					$("#submit_text").on("click", function(){
-						var userAddress = $("#addressInput").val();
-						//console.log("submit useraddress:", userAddress);
-						
-						gapi.client.setApiKey('AIzaSyBdwLeB6a9ZTuLuEdYlM_JClg6FndXjfTs');
-						findCD(userAddress, findCDSuccess);
-					});
-					
-					//console.log(JSON.stringify(dataArray));
-					//console.log(dataArray[0]["testkey"]);
-					//console.log(dataArray[0]["cd_pct_unins"]);
-					//console.log(typeof dataArray[0]["cd_pct_unins"]);
-				
+					// Event: Find congressional district given user address input
+					eventListener()
 
-					//findCD(userAddress)
+
+					
 				};				
 
 			};
@@ -307,6 +349,7 @@
 
 		</script>
 
+		<!-- load main using Google API -->
 		<script src="https://apis.google.com/js/client.js?onload=main"></script>
 
 		<!-- call Bootstrap JS -->
