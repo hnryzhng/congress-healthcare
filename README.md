@@ -1,4 +1,4 @@
-# Congressional Rep Obamacare Tiles #
+# Congress Rep Healthcare Tiles #
 
 This is the source code for the web app "Midterms 2018: Does My Congress Rep Support Obamacare?" 
 
