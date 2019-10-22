@@ -1,6 +1,8 @@
 # Congressional Rep Obamacare Tiles #
 
-This is the source code for the web app "Midterms 2018: Does My Congress Rep Support Obamacare?" [Click here](http://pictograf.org/does-my-congress-rep-support-obamacare/) to visit. 
+This is the source code for the web app "Midterms 2018: Does My Congress Rep Support Obamacare?" 
+
+[Click here](http://pictograf.org/does-my-congress-rep-support-obamacare/) to visit. 
 
 Since healthcare reform was a major issue during the 2018 midterm elections, I created this app so users can see how many people in their congressional district qualify for the Affordable Care Act, known popularly as Obamacare, yet remain uninsured. The aim is to highlight the number of people who could benefit from ACA but are not covered. 
 
