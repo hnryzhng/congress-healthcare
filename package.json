@@ -2,7 +2,7 @@
   "name": "congress-healthcare",
   "version": "1.0.0",
   "description": "This is the source code for the web app \"Midterms 2018: Does My Congress Rep Support Obamacare?\"",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
