@@ -7,6 +7,10 @@ var path = require('path');
 var bodyParser = require('body-parser');	// for parsing body of POST request
 var fs = require('fs');
 
+// ping Heroku
+const pingHeroku = require(path.join(__dirname, "/ping-heroku.js"));
+pingHeroku("https://congress-healthcare.herokuapp.com/", 1799000);	// every 1799 seconds, or almost 30 minutes (1800 sec)
+
 // initialize app object
 var app = express();
 
